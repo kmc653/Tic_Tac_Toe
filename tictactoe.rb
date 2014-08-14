@@ -39,33 +39,46 @@ end
 #check if there is a winner
 def check_win(board)
   #list all of winning condition
-  win_condition = [[1, 2, 3], [4, 5, 6], [7, 8, 9], [1, 4, 9], [2, 5, 8],
+  win_condition = [[1, 2, 3], [4, 5, 6], [7, 8, 9], [1, 4, 7], [2, 5, 8],
                   [3, 6, 9], [1, 5, 9], [3, 5, 7]]
   player_selseced = board.select {|k,v| v == 'O'}
   com_selected = board.select {|k,v| v == 'X'}
+  
+  status = false
 
-  if win_condition.include?(player_selseced.keys)
-    puts "You won!"
-  elsif win_condition.include?(com_selected.keys)
-    puts "Computer won!"
-  end
+  
+    win_condition.each do |arr|
+      if arr & player_selseced.keys == arr
+        puts "You won!"
+        status = true
+        break
+      elsif arr & com_selected.keys == arr
+        puts "Computer won!"
+        status = true
+        break
+      end
+    end
+
+    if player_selseced.keys.count == 5 && status == false 
+        puts "Tie game!"
+        status = true
+    end
+
+    return status
 end
 
-
-
-
-loop do
+begin
   new_board = initialize_square
   draw_board(new_board)
   begin
     player_choice(new_board)
     draw_board(new_board)
-    check_win(new_board) 
+    break if check_win(new_board) 
     computer_choice(new_board)
     draw_board(new_board)
-    check_win(new_board) 
+    break if check_win(new_board) 
   end while true
 
-  puts "Good bye!"
-  break
-end 
+  puts "Play again? (Y/N)"
+  decision = gets.chomp.downcase
+end until decision != 'y'
